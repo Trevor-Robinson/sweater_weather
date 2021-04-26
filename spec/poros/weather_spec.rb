@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe Forecast do
+RSpec.describe Weather do
   before :each do
     data = {:current_weather=>
   {:dt=>1619381136,
@@ -222,11 +222,11 @@ RSpec.describe Forecast do
     :wind_gust=>24.2,
     :weather=>[{:id=>800, :main=>"Clear", :description=>"clear sky", :icon=>"01n"}],
     :pop=>0}]}
-    @results = Forecast.new(data)
+    @results = Weather.new(data)
   end
 
   it "returns all data as poros" do
-    expect(@results.class).to eq(Forecast)
+    expect(@results.class).to eq(Weather)
     expect(@results.current_weather.class).to eq(Current)
     @results.daily_weather.each do |day|
       expect(day.class).to eq(Daily)

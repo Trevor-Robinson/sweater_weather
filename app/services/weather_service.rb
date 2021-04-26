@@ -1,7 +1,12 @@
 class WeatherService
-  def get_forecast(coordinates)
+  def get_weather(coordinates)
     weather_data = get_data(coordinates)
     {current_weather: weather_data[:current], daily_weather: weather_data[:daily][0..4], hourly_weather: weather_data[:hourly][0..7]}
+ end
+
+ def get_forecast(coordinates)
+   weather_data = get_data(coordinates)
+   weather_data[:current]
  end
 
 

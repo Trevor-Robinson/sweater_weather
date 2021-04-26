@@ -1,7 +1,7 @@
 class ForecastFacade
   def weather_data(location)
     coordinates = get_coordinates(location)
-    get_forecast(coordinates)
+    get_weather(coordinates)
   end
 
   def get_coordinates(location)
@@ -10,9 +10,9 @@ class ForecastFacade
     Coordinates.new(coordinates)
   end
 
-  def get_forecast(coordinates)
+  def get_weather(coordinates)
     service = WeatherService.new
-    forecast = service.get_forecast(coordinates)
-    Forecast.new(forecast)
+    forecast = service.get_weather(coordinates)
+    Weather.new(forecast)
   end
 end
