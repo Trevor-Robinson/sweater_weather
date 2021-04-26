@@ -6,7 +6,7 @@ RSpec.describe 'Weather Service' do
       VCR.use_cassette('weather_api') do
         coords = Coordinates.new({:lat=>39.738453, :lng=>-104.984853})
         service = WeatherService.new
-        response = service.get_forecast(coords)
+        response = service.get_weather(coords)
         expect(response).to_not have_key(:minutely_weather)
         expect(response).to_not have_key(:alerts)
         expect(response).to have_key(:current_weather)

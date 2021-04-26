@@ -11,12 +11,12 @@ RSpec.describe ForecastFacade do
     end
   end
 
-  it 'can return a forecast object' do
+  it 'can return a weather object' do
     VCR.use_cassette('get_forecast') do
       coords = Coordinates.new({:lat=>39.738453, :lng=>-104.984853})
       facade = ForecastFacade.new
-      results = facade.get_forecast(coords)
-      expect(results).to be_a(Forecast)
+      results = facade.get_weather(coords)
+      expect(results).to be_a(Weather)
       expect(results.current_weather).to be_a(Current)
       expect(results.current_weather.methods).to include(:datetime, :visibility, :conditions, :sunrise, :sunset, :temperature, :feels_like, :humidity, :uvi, :icon)
       expect(results.current_weather.methods).to_not include(:pressure, :hummidity, :dew_point, :clouds, :wind_speed, :wind_deg, :wind_gust)
@@ -37,7 +37,7 @@ RSpec.describe ForecastFacade do
     VCR.use_cassette('weather_data') do
       facade = ForecastFacade.new
       results = facade.weather_data("denver,CO")
-      expect(results.class).to eq(Forecast)
+      expect(results.class).to eq(Weather)
     end
   end
 end
