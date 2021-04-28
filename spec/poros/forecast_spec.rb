@@ -20,6 +20,6 @@ RSpec.describe Forecast do
 
  result = Forecast.new(data)
  expect(result).to be_a(Forecast)
- expect(result.class.instance_methods(false)).to eq(expected_methods)
+ expect(result.class.instance_methods(false)).to match_array(expected_methods)
   end
 end

@@ -9,6 +9,7 @@ RSpec.describe 'Weather Service' do
         response = service.get_weather(coords)
         expect(response).to_not have_key(:minutely_weather)
         expect(response).to_not have_key(:alerts)
+        expect(response.count).to eq(3)
         expect(response).to have_key(:current_weather)
         expect(response[:current_weather]).to have_key(:dt)
         expect(response[:current_weather]).to have_key(:sunrise)
@@ -53,22 +54,74 @@ RSpec.describe 'Weather Service' do
           expect(day[:weather].first).to be_a(Hash)
           expect(day[:weather].first[:description]).to be_a(String)
           expect(day[:weather].first[:icon]).to be_a(String)
-          expect(response).to have_key(:hourly_weather)
-          expect(response[:hourly_weather].count).to eq(8)
-          response[:hourly_weather].each do |hour|
-            expect(hour).to have_key(:dt)
-            expect(hour).to have_key(:temp)
-            expect(hour).to have_key(:weather)
-            expect(hour[:weather].first).to have_key(:description)
-            expect(hour[:weather].first).to have_key(:icon)
-            expect(hour[:dt]).to be_a(Integer)
-            expect(hour[:temp]).to be_a(Float)
-            expect(hour[:weather].first).to be_a(Hash)
-            expect(hour[:weather].first[:description]).to be_a(String)
-            expect(hour[:weather].first[:icon]).to be_a(String)
-          end
+        end
+        expect(response).to have_key(:hourly_weather)
+        expect(response[:hourly_weather].count).to eq(8)
+        response[:hourly_weather].each do |hour|
+          expect(hour).to have_key(:dt)
+          expect(hour).to have_key(:temp)
+          expect(hour).to have_key(:weather)
+          expect(hour[:weather].first).to have_key(:description)
+          expect(hour[:weather].first).to have_key(:icon)
+          expect(hour[:dt]).to be_a(Integer)
+          expect(hour[:temp]).to be_a(Float)
+          expect(hour[:weather].first).to be_a(Hash)
+          expect(hour[:weather].first[:description]).to be_a(String)
+          expect(hour[:weather].first[:icon]).to be_a(String)
         end
       end
+    end
+    it 'returns weather at arrival time' do
+      VCR.use_cassette('eta') do
+        coords = Coordinates.new({:lat=>39.738453, :lng=>-104.984853})
+        hours1 = 0
+        hours2 = 24
+        hours3 = 80
+        service = WeatherService.new
+        result1 = service.get_weather_at_eta(hours1, coords)
+        result2 = service.get_weather_at_eta(hours2, coords)
+        result3 = service.get_weather_at_eta(hours3, coords)
+        expect(result1).to be_a(Hash)
+        expect(result1.count).to eq(2)
+        expect(result1[:temperature]).to be_a(Float)
+        expect(result1[:conditions]).to be_a(String)
+        expect(result2).to be_a(Hash)
+        expect(result2.count).to eq(2)
+        expect(result2[:temperature]).to be_a(Float)
+        expect(result2[:conditions]).to be_a(String)
+        expect(result3).to be_a(Hash)
+        expect(result3.count).to eq(2)
+        expect(result3[:temperature]).to be_a(Float)
+        expect(result3[:conditions]).to be_a(String)
+        expect(result1[:temperature]).to_not eq(result2[:temperature])
+        expect(result1[:temperature]).to_not eq(result3[:temperature])
+        expect(result2[:temperature]).to_not eq(result3[:temperature])
+      end
+    end
+  end
+  describe 'sad path' do
+    it 'returns error if coordinates are invalid' do
+      VCR.use_cassette('invalid_coords') do
+      coords = Coordinates.new({:lat=>"blue", :lng=>10.984853})
+      service = WeatherService.new
+      response = service.get_weather(coords)
+      expect(response).to be_a(Hash)
+      expect(response.count).to eq(2)
+      expect(response[:error]).to eq("wrong latitude")
+      expect(response[:status]).to eq(400)
+      end
+    end
+    it 'returns error if hours are invalid' do
+      VCR.use_cassette('invalid_hours') do
+      coords = Coordinates.new({:lat=>39.738453, :lng=>-104.984853})
+      hours = -10
+      service = WeatherService.new
+      response = service.get_weather_at_eta(hours, coords)
+      expect(response).to be_a(Hash)
+      expect(response.count).to eq(2)
+      expect(response[:error]).to eq("Invalid hour count")
+      expect(response[:status]).to eq(400)
+    end
     end
   end
 end

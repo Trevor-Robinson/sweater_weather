@@ -2,8 +2,16 @@ class ImageService
 
   def get_background(search_query, coordinates)
     data = get_image_data(search_query, coordinates)
+    if data[:photos][:photo].empty?
+      {status: 400, error: "Invalid photo search"}
+    else
+      user = get_user(data[:photos][:photo].first[:owner])
+      {photo: data[:photos][:photo].first, user: user[:user]}
+    end
   end
 
+
+  private
   def get_user(id)
     response = connection.get("/services/rest/") do |req|
       req.params['api_key'] = ENV['image_key']
@@ -14,8 +22,6 @@ class ImageService
     end
     JSON.parse(response.body, symbolize_names: true)
   end
-
-  private
 
   def get_image_data(search_query, coordinates)
     response = connection.get("/services/rest/") do |req|

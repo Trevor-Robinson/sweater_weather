@@ -5,13 +5,9 @@ class Weather
               :id
   def initialize(data)
     @id = id
-    @current_weather = current(data[:current_weather])
+    @current_weather = Current.new(data[:current_weather])
     @daily_weather = daily(data[:daily_weather])
     @hourly_weather = hourly(data[:hourly_weather])
-  end
-
-  def current(data)
-    Current.new(data)
   end
 
   def daily(data)
