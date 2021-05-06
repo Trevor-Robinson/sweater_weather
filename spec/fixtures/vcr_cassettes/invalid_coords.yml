@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - openresty
       Date:
-      - Tue, 27 Apr 2021 19:44:40 GMT
+      - Thu, 06 May 2021 17:28:13 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
@@ -39,5 +39,5 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"cod":"400","message":"wrong latitude"}'
-  recorded_at: Tue, 27 Apr 2021 19:44:40 GMT
+  recorded_at: Thu, 06 May 2021 17:28:13 GMT
 recorded_with: VCR 6.0.0
